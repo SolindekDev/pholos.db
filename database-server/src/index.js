@@ -5,11 +5,10 @@ const { start } = require('repl')
 const JSON = new StartJSON({
     FilePath: "./config.json"
 })
+const password  = db.get("database_password") || 123
 const server = require('./server')
-const newServer = new server(db.get('database_port'), db.get('database_login'), db.get('database_password'))
-const fs = require('fs')
-const { Server } = require('http')
 let firstStart = db.get('first_start') || "true"
+const fs = require('fs')
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -51,6 +50,7 @@ if (firstStart == 'true')
         })
     })
 } else {
+    const newServer = new server(db.get('database_port'), db.get('database_login') || 'root', db.get('database_password')  || 123)
     start()
     function start()
     {
@@ -151,8 +151,8 @@ if (firstStart == 'true')
             return;
         }
         if (command == "options") {
-            rl.question('Your password: ', (password) => {
-                if (!password || db.get('database_password') != password)
+            rl.question('Your password: ', (passwordd) => {
+                if (!passwordd || password != passwordd)
                 {
                     console.log("Incorrect password!")
                     console.log("")
@@ -163,7 +163,7 @@ if (firstStart == 'true')
                     console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                     console.log('Port: ' + db.get('database_port') || "Not set")
                     console.log('Login: ' + db.get('database_login') || "root")
-                    console.log('Password: ' + db.get('database_password') || '123')
+                    console.log('Password: ' + password)
                     console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
                     start()
                 }

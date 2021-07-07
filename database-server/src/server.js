@@ -40,7 +40,7 @@ module.exports = class Server {
             {
                 return res.json({ 
                     status: 101,
-                    message: "Incorrect login!"
+                    message: "Incorrect password!"
                 })
             }
             if (req.query.set)
@@ -76,7 +76,21 @@ module.exports = class Server {
             {
                 if (req.query.get == "true")
                 {
-                    
+                    if (req.query.getDatabaseValue)
+                    {
+                        let value = db.get(req.query.getDatabaseValue) 
+                        return res.json({
+                            status: 204,
+                            message: "Value has get",
+                            results: value
+                        }) 
+                    }
+                    else {
+                        return res.json({
+                            status: 106,
+                            message: "getDatabaseValue query not found!"
+                        })
+                    }
                 }
             }
             else {

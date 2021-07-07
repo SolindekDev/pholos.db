@@ -1,0 +1,25 @@
+{
+  "name": "pholos.js",
+  "version": "1.0.0",
+  "description": "Official API of pholos.db",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Solindek, PholosTeam",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SolindekDev/pholos.db.git"
+  },
+  "keywords": [
+    "Nodejs"
+  ],
+  "bugs": {
+    "url": "https://github.com/SolindekDev/pholos.db/issues"
+  },
+  "homepage": "https://github.com/SolindekDev/pholos.db#readme",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
