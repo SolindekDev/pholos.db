@@ -5,6 +5,10 @@ const { start } = require('repl')
 const JSON = new StartJSON({
     FilePath: "./config.json"
 })
+const server = require('./server')
+const newServer = new server(db.get('database_port'), db.get('database_login'), db.get('database_password'))
+const fs = require('fs')
+const { Server } = require('http')
 let firstStart = db.get('first_start') || "true"
 
 const rl = readline.createInterface({
@@ -64,9 +68,78 @@ if (firstStart == 'true')
             console.log("stop - Stop a database")
             console.log("options - Current settings of database")
             console.log("resetdatabase - !!Warning!! This command will reset all database")
-            console.log("change - Change some variables")
+            console.log("clear - Clear console")
             console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
             start()
+            return;
+        }
+        if (command == "start" || command == "s")
+        {
+            newServer.startServer()
+            start()
+            return
+        }
+        if (command == "close" || command == "stop")
+        {
+            newServer.stopServer()
+            start()
+            return
+        }
+        if (command == "resetdatabase" || command == "rdatabase")
+        {
+            rl.question('Your password: ', (password) => {
+                if (!password || db.get('database_password') != password)
+                {
+                    console.log("Incorrect password!")
+                    console.log("")
+                    start()
+                }
+                else {
+                    console.log('This action cannot be undone')
+                    rl.question('Y/N: ', (check) => {
+                        if (check == "y" || check == "Y")
+                        {
+                            console.clear()
+                            console.log('Database is restarting...')
+                            setTimeout(() => {
+                                console.clear()
+                                console.log('Please wait...')
+                                setTimeout(() => {
+                                    console.clear()
+                                    console.log('Please wait...')
+                                    setTimeout(() => {
+                                        console.clear()
+                                        console.log('Please wait...')
+                                        db.set('first_start', 'true')
+                                        setTimeout(() => {
+                                            console.clear()
+                                            console.log("The database has been reset")
+                                            console.log("Process stoped")
+                                            setTimeout(() => {
+                                                process.exit(0)
+                                            }, 1000);
+                                        }, 500);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1000);
+                        }
+                        else {
+                            console.clear()
+                            console.log("The action was stopped including all data")
+                            console.log(' ')
+                            start()
+                        }
+                    })
+                    
+                }
+            })
+            return;
+        }
+        if (command == "clear" || command == "cls")
+        {
+            console.clear()
+            start()
+            return;
         }
         if (command == "stop")
         {
@@ -75,15 +148,31 @@ if (firstStart == 'true')
             setTimeout(() => {
                 process.exit(0)
             }, 3000)
+            return;
         }
         if (command == "options") {
-            console.log('')
+            rl.question('Your password: ', (password) => {
+                if (!password || db.get('database_password') != password)
+                {
+                    console.log("Incorrect password!")
+                    console.log("")
+                    start()
+                }
+                else {
+                    console.log('')
+                    console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                    console.log('Port: ' + db.get('database_port') || "Not set")
+                    console.log('Login: ' + db.get('database_login') || "root")
+                    console.log('Password: ' + db.get('database_password') || '123')
+                    console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+                    start()
+                }
+            })
+            return;
         }
-        else {
-            console.log("")
-            console.log("Command not found, use command 'help'")
-            start()
-        }
+        console.log("")
+        console.log("Command not found, use command 'help'")
+        start()
     }
 }
 
